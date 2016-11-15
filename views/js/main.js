@@ -375,7 +375,7 @@ var pizzaElementGenerator = function(i) {
   pizzaContainer.classList.add("randomPizzaContainer");
   pizzaContainer.style.width = "33.33%";
   pizzaContainer.style.height = "325px";
-  pizzaContainer.id = "pizza" + i;                // gives each pizza element a unique id
+  pizzaContainer.id = "pizza" + i;
   pizzaImageContainer.style.width="35%";
 
   pizzaImage.src = "images/pizza.png";
@@ -398,19 +398,13 @@ var pizzaElementGenerator = function(i) {
   return pizzaContainer;
 };
 
-// Variables delared for modification
 
+//Move variables out of resizePizzas fuction
 var pizzaSize = document.getElementById("pizzaSize");
 var randomPizzas = document.getElementById("randomPizzas");
-var randomPizzasOffset;
+var randomPizzaOffset;
 var randomPizzaContainer;
 var rpcLength;
-
-
-
-
-
-
 
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
 var resizePizzas = function(size) {
@@ -423,7 +417,7 @@ var resizePizzas = function(size) {
         pizzaSize.innerHTML = "Small";
         return;
       case "2":
-       pizzaSize.innerHTML = "Medium";
+        pizzaSize.innerHTML = "Medium";
         return;
       case "3":
         pizzaSize.innerHTML = "Large";
@@ -435,18 +429,11 @@ var resizePizzas = function(size) {
 
   changeSliderLabel(size);
 
-   // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  //function determineDx (elem, size) {
-    // var oldWidth = elem.offsetWidth;
-    // var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
-    // var oldSize = oldWidth / windowWidth;
-
-    // Changes the slider value to a percent width
-    function changePizzaSizes(size) {
+  //Iterates through pizza elements on the page and changes their widths
+  function changePizzaSizes(size) {
       var newSize;
 
-
-
+      //Optimized switch function to directly change the width
       switch(size) {
         case "1":
           newSize = 0.25;
@@ -458,28 +445,15 @@ var resizePizzas = function(size) {
           newSize = 0.5;
           break;
         default:
-          console.log("bug");
+          console.log("error");
       }
- //   }
+
       var randomPizzas = randomPizzaContainer;
-      var newWidth = newSize * randomPizzasOffset;
+      var newWidth = newSize * randomPizzaOffset;
       for (var i = 0; i < rpcLength; i++) {
         randomPizzas[i].style.width = newWidth + 'px';
       }
-    // var newSize = sizeSwitcher(size);
-    // var dx = (newSize - oldSize) * windowWidth;
-
-    // return dx;
-  }
-
-  // Iterates through pizza elements on the page and changes their widths
-
-    // for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-    //   var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-    //   var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-    //   document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
-    // }
-
+    }
 
   changePizzaSizes(size);
 
@@ -490,7 +464,7 @@ var resizePizzas = function(size) {
   console.log("Time to resize pizzas: " + timeToResize[timeToResize.length-1].duration + "ms");
 };
 
-window.performance.mark("mark_start_generating"); // collect timing data
+window.performance.mark("mark_start_generating");
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
 for (var i = 2; i < 100; i++) {
@@ -498,16 +472,10 @@ for (var i = 2; i < 100; i++) {
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
-
-// Variables for resizePizzas()
-
-randomPizzaContainer = document.getElementsByClassName("randomPizzaContainer")
+//Defined few of the variables here for resizePizzas()
+randomPizzaContainer = document.getElementsByClassName("randomPizzaContainer");
 rpcLength = randomPizzaContainer.length;
-randomPizzasOffset = randomPizzas.offsetWidth;
-
-
-
-
+randomPizzaOffset = randomPizzas.offsetWidth;
 
 
 // User Timing API again. These measurements tell you how long it took to generate the initial pizzas
@@ -533,30 +501,22 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
 // The following code for sliding background pizzas was pulled from Ilya's demo found at:
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
-
-
-// Made Global Variables
+// Made global variable
 
 var items;
-var itemLength;
-
-
-
-
+var itemsLength;
 
 // Moves the sliding background pizzas based on scroll position
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-// Moved variables out of For loop
+  //Moved few variables out of "for" loop
+  var i;
+  var scrollTop = document.body.scrollTop / 1250;
 
-  var i ;
-  var scrollTopBot = document.body.scrollTopBot / 1250;
-
-
-  for (i = 0; i < items.length; i++) {
-    var phase = Math.sin(scrollTopBot + (i % 5));
+  for (i = 0; i < itemsLength; i++) {
+    var phase = Math.sin(scrollTop + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
 
@@ -579,22 +539,20 @@ document.addEventListener('DOMContentLoaded', function() {
   var s = 256;
   var rows = Math.floor(window.screen.height / s);
   var elementNumber = cols * rows;
-  var movingPizzas = document.getElementById("movingPizzas1");
-// Moves the sliding background pizzas based on scroll position
-  for (var i = 0; i < elementNumber ; i++) {
+  var movingPizzas = document.getElementById("movingPizzas1");  //Replaced querySelector by getElement method
+
+//Number of pizzas in background is calculated according to screen height
+  for (var i = 0; i < elementNumber; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
-    // elem.style.height = "100px";
-    // elem.style.width = "73.333px";
 
-// Moved height and width to css
-
+    //Moved height and width to css
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     movingPizzas.appendChild(elem);
   }
-  items = document.getElementsByClassName('mover');
-  itemLength = items.length;
+  items = document.getElementsByClassName('mover');   //Replaced querySelector by getElement method
+  itemsLength = items.length;
   updatePositions();
 });
